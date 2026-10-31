@@ -1476,8 +1476,7 @@ function Remove-NonEssentialServices {
         'diagsvc',             # Diagnostic Execution Service
         'MapsBroker',          # Downloaded Maps Manager
         'WalletService',       # Wallet Service
-        'BthAvctpSvc',         # Bluetooth Audio
-        'BluetoothUserService' # Bluetooth User Support
+        'BthAvctpSvc'         # Bluetooth Audio
     )
     
     foreach ($service in $servicesToRemove) {
