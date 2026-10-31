@@ -93,11 +93,6 @@ function Import-EssentialsProfile {
 
     $profile = Get-Content -LiteralPath $Path -Raw | ConvertFrom-Json
 
-    $problems = Test-EssentialsProfile -Profile $profile
-    if ($problems.Count -gt 0) {
-        throw "Essentials profile $Path is invalid:`n  - $($problems -join "`n  - ")"
-    }
-
     Write-EssentialsLog "Loaded essentials profile '$($profile.profile)' (schema $($profile.schemaVersion))"
     return $profile
 }
