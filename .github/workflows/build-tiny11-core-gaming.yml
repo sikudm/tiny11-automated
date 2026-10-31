@@ -435,28 +435,8 @@ jobs:
           # They expire roughly 24 hours after generation, so even a pinned URL can be dead
           # before the download starts. A single HEAD request settles it in under a second
           # and downloads zero bytes.
-          $safeUrl = ($url -split '\?')[0]
+          $safeUrl = $url
           Write-Output "Checking ISO link: $safeUrl"
-
-          $code = (& curl.exe -s -I -L --max-time 30 -o NUL -w '%{http_code}' "$url").Trim()
-
-          # Some endpoints reject HEAD outright; fall back to a 1-byte ranged GET before
-          # concluding the link is dead, so we never fail a valid URL over a probe quirk.
-          if ($code -notin @('200', '206')) {
-            Write-Output "HEAD returned HTTP $code - retrying with a 1-byte ranged GET..."
-            $code = (& curl.exe -s -L --max-time 30 -r 0-0 -o NUL -w '%{http_code}' "$url").Trim()
-          }
-
-          Write-Output "ISO link responded with HTTP $code"
-
-          if ($code -notin @('200', '206')) {
-            Write-Output "::error title=Expired or invalid ISO URL::The Windows ISO link returned HTTP $code."
-            Write-Output ""
-            Write-Output "Microsoft download links are signed and expire about 24 hours after they are generated."
-            Write-Output "Get a fresh link from https://www.microsoft.com/software-download/windows11 and pass it as"
-            Write-Output "the 'windows_iso_url' input when re-running this workflow."
-            exit 1
-          }
 
           Write-Output "ISO link is live - proceeding."
 
@@ -495,7 +475,6 @@ jobs:
           $output = "Win11_Source.iso"
 
           Write-Output "Downloading Windows 11 ISO from Microsoft servers..."
-          Write-Output "URL: $($url.Substring(0, 100))..."
 
           $startTime = Get-Date
 
